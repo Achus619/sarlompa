@@ -1,6 +1,7 @@
 package domain
 
 import scala.util.Try
+import scala.collection.JavaConversions.asScalaBuffer
 
 abstract class Reglas { 
 
@@ -36,12 +37,12 @@ abstract class Reglas {
   
 	def quienesAvanzan(vikingos: List[Vikingo]) : List[Vikingo]
   
-	def decidirGanador(participantes: List[ParticipanteTorneo]) : Option[ParticipanteTorneo]
+	def decidirGanador(participantes: List[Vikingo]) : Option[ParticipanteTorneo]
 }
 
 class Estandar extends Reglas{
   
-  def decidirGanador(participantes: List[ParticipanteTorneo]) : Option[ParticipanteTorneo] = 
+  def decidirGanador(participantes: List[Vikingo]) : Option[ParticipanteTorneo] = 
     participantes.headOption
   
   
@@ -61,7 +62,7 @@ case object Inverso extends Estandar{
   override def quienesAvanzan(vikingos: List[Vikingo]) =
     vikingos.takeRight(laMitad(vikingos))
     
-  override def decidirGanador(participantes:List[ParticipanteTorneo]) =
+  override def decidirGanador(participantes:List[Vikingo]) =
     super.decidirGanador(participantes.reverse)
   
 }
@@ -83,10 +84,15 @@ case object Handicap extends Estandar{
 
 case object Equipos extends Estandar{
   
- override def decidirGanador(participantes:List[ParticipanteTorneo]) : Option[ParticipanteTorneo] = 
-     participantes.sortWith((unParticipante, otroParticipante) => unParticipante.cuantosSon >= otroParticipante.cuantosSon)
-       .headOption
+ override def decidirGanador(participantes:List[Vikingo]) : Option[ParticipanteTorneo] = 
+     participantes.groupBy(_.equipo).mapValues(_.size).maxBy(_._2)._1
+ 
+ 
+ 
 }
+
+
+
 
 
 

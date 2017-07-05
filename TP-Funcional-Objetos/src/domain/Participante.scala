@@ -62,7 +62,7 @@ case class Vikingo(
       nivelDeHambre: Int = 0,
       item: Item,
       efectos : EfectosPosta = EfectosPosta(),
-      equipo : Int = 0
+      equipo : Option[Equipo]
 ) extends ParticipantePosta with ParticipanteTorneo
 { 
   

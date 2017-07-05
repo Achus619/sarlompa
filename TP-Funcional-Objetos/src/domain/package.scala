@@ -15,11 +15,14 @@ package object domain {
   val Maza    = Arma(100,0,40)
   val SistemaDeVuelo   = Arma(2,30,5)
   val ComestibleHambre = Consumible(4)
+  val Rojo = Equipo(List(Patan: Vikingo, Patapez))
   
-  val Hipo    = Vikingo(item = SistemaDeVuelo)
-  val Astrid  = Vikingo(item = Hacha)
-  val Patan   = Vikingo(item = Maza)
-  val Patapez = Vikingo(item = ComestibleHambre, efectos = EfectosPosta(50,2))
+  val Hipo    = Vikingo(item = SistemaDeVuelo, equipo = None)
+  val Astrid  = Vikingo(item = Hacha, equipo = None)
+  val Patan   = Vikingo(item = Maza, equipo = None)
+  val Patapez = Vikingo(item = ComestibleHambre, efectos = EfectosPosta(50,2), equipo = None)
+  
+  
   
   
   val Chimuelo = FuriaNocturna(100,List(tiene(SistemaDeVuelo)))
