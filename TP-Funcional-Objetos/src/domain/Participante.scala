@@ -20,7 +20,7 @@ trait ParticipantePosta{
 
 trait ParticipanteTorneo{
   def cuantosSon : Int
-  def reOrganizate : ParticipanteTorneo
+  def reOrganizate(vikingos: List[Vikingo]) : ParticipanteTorneo
 }
 
 case class Equipo(vikingos: List[Vikingo]) extends ParticipanteTorneo{

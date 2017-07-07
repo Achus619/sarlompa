@@ -15,7 +15,7 @@ case class Torneo(
   def jugarPostas : List[ParticipanteTorneo] = {
     postas.foldLeft(participantes){(participantesEnJuego,posta) =>
       if(hayMasDeUnVikingo(participantesEnJuego) )
-        jugarPosta(participantesEnJuego, posta).map(_.reOrganizate)
+        participantes.map(_.reOrganizate(jugarPosta(participantesEnJuego, posta))
       else
         participantesEnJuego
     }
@@ -23,7 +23,7 @@ case class Torneo(
   
   def hayMasDeUnVikingo(participantes: List[ParticipanteTorneo]) = participantes.size > 1
   
-  def jugarPosta(participantesEnJuego: List[ParticipanteTorneo],posta:Posta) : List[ParticipanteTorneo] = {
+  def jugarPosta(participantesEnJuego: List[ParticipanteTorneo],posta:Posta) : List[Vikingo] = {
     val participantesMontadosONo = reglas.eleccionDeDragones(participantesEnJuego,posta,dragones)
     val vikingosListos = prepararParticipantes(participantesMontadosONo).flatten
     val ganadores = posta.participar(vikingosListos).map(_.vikingo)
