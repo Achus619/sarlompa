@@ -20,10 +20,15 @@ trait ParticipantePosta{
 
 trait ParticipanteTorneo{
   def cuantosSon : Int
+  def reOrganizate : ParticipanteTorneo
 }
 
 case class Equipo(vikingos: List[Vikingo]) extends ParticipanteTorneo{
-  
+  def reOrganizate(vikingosGanadores : List[Vikingo]) = {
+    this.copy(
+    vikingos.map(vikingo => vikingosGanadores.filter(vikingoGanador => vikingo == vikingoGanador).headOption)
+      .filter(_.isDefined).map(_.get))
+  }
   def cuantosSon = vikingos.size
 }
 
@@ -62,7 +67,7 @@ case class Vikingo(
       nivelDeHambre: Int = 0,
       item: Item,
       efectos : EfectosPosta = EfectosPosta(),
-      equipo : Option[Equipo]
+      equipo : Int = 0
 ) extends ParticipantePosta with ParticipanteTorneo
 { 
   

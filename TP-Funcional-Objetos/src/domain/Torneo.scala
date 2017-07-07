@@ -11,19 +11,11 @@ case class Torneo(
   def competir : Option[ParticipanteTorneo] = {
     reglas.decidirGanador(jugarPostas)
   }
-    
-  def prepararParticipantes = { participantes map {
-    case vikingo:Vikingo => List() :+ vikingo
-    case equipo:Equipo => equipo.vikingos
-
-    }
-    
-  }
   
-  def jugarPostas : List[Vikingo] = {
-    postas.foldLeft(prepararParticipantes.flatten){(participantesEnJuego,posta) =>
+  def jugarPostas : List[ParticipanteTorneo] = {
+    postas.foldLeft(participantes){(participantesEnJuego,posta) =>
       if(hayMasDeUnVikingo(participantesEnJuego) )
-        jugarPosta(participantesEnJuego, posta)
+        jugarPosta(participantesEnJuego, posta).map(_.reOrganizate)
       else
         participantesEnJuego
     }
@@ -31,16 +23,26 @@ case class Torneo(
   
   def hayMasDeUnVikingo(participantes: List[ParticipanteTorneo]) = participantes.size > 1
   
-  def jugarPosta(vikingosEnJuego: List[Vikingo],posta:Posta) : List[Vikingo] = {
-    val participantesListos = reglas.eleccionDeDragones(vikingosEnJuego,posta,dragones)
-    val ganadores = posta.participar(participantesListos)
-    val vikingosGanadores = ganadores.map(_.vikingo)
-    reglas.quienesAvanzan(vikingosGanadores)
-    
+  def jugarPosta(participantesEnJuego: List[ParticipanteTorneo],posta:Posta) : List[ParticipanteTorneo] = {
+    val participantesMontadosONo = reglas.eleccionDeDragones(participantesEnJuego,posta,dragones)
+    val vikingosListos = prepararParticipantes(participantesMontadosONo).flatten
+    val ganadores = posta.participar(vikingosListos).map(_.vikingo)
+    reglas.quienesAvanzan(ganadores)    
   }
+  
+  def prepararParticipantes(participantes: List[ParticipanteTorneo]) = { participantes map {
+    case vikingoOJinete:ParticipantePosta => List() :+ vikingoOJinete
+    case equipo:Equipo => equipo.vikingos
+    }    
+  }
+  
 }
 
+  
 
-
+sealed trait EstadoTorneo
+case class  EnJuego(participantes : List[ParticipanteTorneo]) extends EstadoTorneo
+case class  Ganador(participante: ParticipanteTorneo) extends EstadoTorneo
+case object NoHayGanador extends EstadoTorneo
 
 
