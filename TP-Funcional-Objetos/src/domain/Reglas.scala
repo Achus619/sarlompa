@@ -36,23 +36,22 @@ abstract class Reglas {
       
   def actualizarDragones(dragonASacar: Dragon, dragonesDisponibles: List[Dragon]) =
     dragonesDisponibles.filter(_ != dragonASacar)
-  
-  
-	def quienesAvanzan(vikingos: List[Vikingo]) : List[Vikingo]
+    
+  def laMitad(vikingos: List[Vikingo]) = vikingos.size/2
+    
+	def quienesAvanzan(vikingos: List[Vikingo]) : List[ParticipanteTorneo]
   
 	def decidirGanador(participantes: List[ParticipanteTorneo]) : Option[ParticipanteTorneo]
 }
-
+ 
 class Estandar extends Reglas{
   
   def decidirGanador(participantes: List[ParticipanteTorneo]) : Option[ParticipanteTorneo] = 
     participantes.headOption
-  
-  
-  def quienesAvanzan(vikingos: List[Vikingo]) =
+    
+  def quienesAvanzan(vikingos: List[Vikingo]) : List[Vikingo] =
     vikingos.take(laMitad(vikingos))
     
-  def laMitad(vikingos: List[Vikingo]) = vikingos.size/2
   
 }
 case class Eliminacion(siguen:Int) extends Estandar{
@@ -85,15 +84,18 @@ case object Handicap extends Estandar{
   
 }
 
-case object Equipos extends Estandar{
+case object Equipos extends Reglas{
   
  override def decidirGanador(participantes:List[ParticipanteTorneo]) : Option[ParticipanteTorneo] = 
      participantes.sortWith((unParticipante, otroParticipante) => unParticipante.cuantosSon >= otroParticipante.cuantosSon)
        .headOption
        
- override def quienesAvanzan(vikingos: List[Vikingo]) : List[Equipo]=
-   reOrganizarEnEquipos(super.quienesAvanzan(vikingos))
+ override def quienesAvanzan(vikingos: List[Vikingo]) : List[Equipo] =
+   reOrganizarEnEquipos(avanzan(vikingos))
  
+ def avanzan(vikingos: List[Vikingo]) = 
+   vikingos.take(laMitad(vikingos))
+   
  def reOrganizarEnEquipos(vikingos: List[Vikingo]) =
    equipos(vikingos).map(equipo => Equipo(vikingosDelEquipo(equipo,vikingos)))
    
